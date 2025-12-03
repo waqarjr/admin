@@ -1,15 +1,16 @@
 'use client';
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 
 
 export default function Admin() {
-
+    const router = useRouter();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});   
     
-    const formSubmit = (e) => {
+    const formSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};
         if( username.trim() === "" ) newErrors.username = "Username must be required";
@@ -19,12 +20,18 @@ export default function Admin() {
           return setErrors(newErrors);   
         } else {
             setErrors({});
-            console.log(username, password);
-            api.post("/signup", { username, password }) .then((res) => {
-                console.log(res.data);
-            }).catch((err) => { console.log(err.message); })
-            setPassword("");
-            setUsername("");
+            try{
+            const res =  await api.post("/login", { username, password })
+            console.log(res.data);
+            if(res.data.success){
+                setPassword("");
+                setUsername("");
+                router.push('/admin/dashboard')
+            }
+            }catch (err){
+                console.log(err.name);
+            }
+            
         }
 
     }

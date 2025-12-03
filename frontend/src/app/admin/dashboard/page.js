@@ -1,8 +1,25 @@
-export const metadata = {
-    title: "Admin Dashboard",
-    description: "Admin Dashboard",
-};
+'use client';
+
+import api from "@/lib/api";
 
 export default function AdminDashboard() {
-    return <div>Admin Dashboard</div>;
+
+    const logout  = async ()=>{
+        try {
+
+        const res = await api.post("/logout");
+        if(res.data.success) {
+            alert("Logout successfully");
+        }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    return <div>
+        Admin Dashboard
+
+        <button className="btn-primary" onClick={logout} >Logout</button>
+    </div>;
 }
