@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #8a1538;
+  --secondary: #f7f7f7;
+  --background: #fff ;
+  --foreground: #000; 
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-pacifico: var(--font-pacifico);
+  --font-orbitron: var(--font-orbitron);
+  --color-primary: var(--primary);
+
+
+  --breakpoint-mobile: 480px; 
+  --breakpoint-tab: 768px;   
+  --breakpoint-desktop: 1280px;
+
+  --max-w-mobile: 22rem;
+  --max-w-tab: 32rem;
+  --max-w-desktop: 80rem;
+}
+
+@layer base {
+  h1 {
+    font-family: var(--font-orbitron);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  ::selection {
+    background: theme(colors.green.300);
+    color: theme(colors.white);
+  }
+
+  ::-moz-selection {
+    background: theme(colors.green.300);
+    color: theme(colors.white);
+  }
+}
+
+@layer components {
+    .btn-primary {
+      @apply inline-flex items-center justify-center px-4 py-2 font-medium rounded;
+      background-color: var(--color-primary);
+      color: white;
+      transition: transform .12s;
+   }
+
+  .btn-primary:active {
+    transform: translateY(1px);
+  }
+  
+  .container-custom {
+    max-width: var(--width-7xl);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+}

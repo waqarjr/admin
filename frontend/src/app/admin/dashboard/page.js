@@ -1,0 +1,8 @@
+export const metadata = {
+    title: "Admin Dashboard",
+    description: "Admin Dashboard",
+};
+
+export default function AdminDashboard() {
+    return <div>Admin Dashboard</div>;
+}
