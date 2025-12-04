@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 
@@ -9,7 +9,39 @@ export default function Admin() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});   
-    
+    const [loading, setLoading] = useState(true);
+
+    const verified = async (token)=>{
+        try {
+            setLoading(true);
+            const res = await api.post("/checking",{},{headers:{  "Authorization": `Bearer ${token}`}});
+            if(res.data.success) {
+                router.push('/admin/dashboard');
+            } else {
+                router.push('/admin');
+            }
+        }
+        catch (error) {
+            console.log(error.name);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(()=>{
+
+        const token = localStorage.getItem("token");
+
+        if(Boolean(token)) {
+            verified(token);
+        } else{
+            router.push('/admin');
+            setLoading(false);
+        }
+
+    },[])
+
     const formSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};
@@ -22,8 +54,8 @@ export default function Admin() {
             setErrors({});
             try{
             const res =  await api.post("/login", { username, password })
-            console.log(res.data);
             if(res.data.success){
+                localStorage.setItem("token", res.data.data.token);
                 setPassword("");
                 setUsername("");
                 router.push('/admin/dashboard')
@@ -35,6 +67,8 @@ export default function Admin() {
         }
 
     }
+
+    if(loading) return <div>Loading...</div>;
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-slate-900">
