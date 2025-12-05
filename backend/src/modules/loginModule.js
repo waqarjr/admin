@@ -13,23 +13,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 6,
-      select: false // Hide password when finding users
+      select: false 
     },
   },
   { timestamps: true }
 );
 
-// 🔐 Pre-save hook — Encrypt password before storing
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next(); // if password not changed, skip hashing
-
+  if (!this.isModified("password")) return next(); 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 
   next();
 });
 
-// 🧩 Custom method to compare password during login
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

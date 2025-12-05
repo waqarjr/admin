@@ -13,13 +13,14 @@ export default function AdminDashboard() {
         try {
             setLoading(true);
             const res = await api.post("/checking",{},{headers:{  "Authorization": `Bearer ${token}`}});
-            console.log(res.data);
+            console.log(res.data);  
             if(!res.data.success) {
                 router.push('/admin');
             }
         }
         catch (error) {
-            console.log(error.name);
+            console.log(error.response.data);
+            router.push('/admin');
         }finally{
             setLoading(false);
         }
@@ -36,17 +37,21 @@ export default function AdminDashboard() {
     const logout  = async ()=>{
         try {
             const res = await api.post("/logout");
+            console.log(res.data.success);
             if(res.data.success) {
                 localStorage.removeItem("token");
                 router.push('/admin');
             }
         }
         catch (error) {
-            console.log(error.name);
+            console.log(error.response.data);
+            router.push('/admin');
         }
     }
 
-    if(loading) return <div>Loading...</div>;
+    if(loading) return <div className="flex h-screen items-center justify-center" >
+        <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin" ></div>
+    </div>;
 
     return <div>
         Admin Dashboard

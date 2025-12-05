@@ -10,6 +10,8 @@ export default function Admin() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({});   
     const [loading, setLoading] = useState(true);
+    const [formError , setFormError] = useState("");
+
 
     const verified = async (token)=>{
         try {
@@ -22,7 +24,8 @@ export default function Admin() {
             }
         }
         catch (error) {
-            console.log(error.name);
+            console.log(error.response.data);
+            router.push('/admin');
         }
         finally {
             setLoading(false);
@@ -61,14 +64,16 @@ export default function Admin() {
                 router.push('/admin/dashboard')
             }
             }catch (err){
-                console.log(err.name);
+                setFormError(err.response.data.message);
             }
             
         }
 
     }
 
-    if(loading) return <div>Loading...</div>;
+    if(loading) return <div className="flex h-screen items-center justify-center" >
+        <div className="w-10 h-10 border-4 border-t-blue-500 border-gray-300 rounded-full animate-spin" ></div>
+    </div>;
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-slate-900">
@@ -94,7 +99,7 @@ export default function Admin() {
                                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                             </div>
                         </div>
-                        
+                        {(formError.length > 0) && <p className="text-red-500 text-xs mt-1 mx-auto">{formError}</p>}
                         <button className="btn-primary btn-primary:active text-white font-semibold py-2.5 rounded-lg transition duration-200 w-full mt-2"
                        type="submit" >Sign up</button>
                     </form>
