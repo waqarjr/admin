@@ -7,54 +7,21 @@ import api from '@/lib/api';
 export default function DataTable() {
   const router = useRouter();
 
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: 'Product Alpha',
-      description: 'High-quality product with excellent features',
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop'
-    },
-    {
-      id: 2,
-      name: 'Product Beta',
-      description: 'Innovative solution for modern needs',
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100&h=100&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'Product Gamma',
-      description: 'Premium quality with outstanding performance',
-      image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=100&h=100&fit=crop'
-    },
-    {
-      id: 4,
-      name: 'Product Delta',
-      description: 'Reliable and durable for everyday use',
-      image: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=100&h=100&fit=crop'
-    }
-  ]);
+  const [data, setData] = useState([]);
 
-  const fetchData = ()=>{
+  const fetchData = async ()=>{
     try{
-    const newData =  api.get("/files");
-    console.log(newData.data);
+    const newData = await api.get("/files");
+    if(newData.data.success )
+      setData(newData.data.data); 
     }catch(error){
       console.log(error)
-    }
-    
+    } 
   }
 
   useEffect(()=>{
     fetchData();
   },[])
-
-  const handleEdit = (id) => {
-    alert(`Edit item with ID: ${id}`);
-  };
-
-  const handleCreate = () => {
-    alert('Open create form');
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -79,15 +46,15 @@ export default function DataTable() {
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50 transition-colors">
+                <tr key={item._id} className="border-b hover:bg-gray-50 transition-colors">
                   <td className="py-4 px-6 text-gray-800 font-medium">{item.name}</td>
                   <td className="py-4 px-6 text-gray-600">{item.description}</td>
                   <td className="py-4 px-6">
-                    <img  src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded"/>
+                    <img  src={item.file} alt={item.name} className="w-16 h-16 object-cover rounded"/>
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex gap-2">
-                      <button onClick={() => handleEdit(item.id)} title="Edit" 
+                      <button onClick={() => router.push(`/admin/files/${item._id}`)} title="Edit" 
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors" >Edit</button>
                     </div>
                   </td>
