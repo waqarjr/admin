@@ -17,6 +17,7 @@ export default function Admin() {
         try {
             setLoading(true);
             const res = await api.post("/checking",{},{headers:{  "Authorization": `Bearer ${token}`}});
+
             if(res.data.success) {
                 router.push('/admin/dashboard');
             } else {
@@ -24,7 +25,7 @@ export default function Admin() {
             }
         }
         catch (error) {
-            console.log(error.response.data);
+            console.log(error.response.data.message);
             router.push('/admin');
         }
         finally {
@@ -55,7 +56,9 @@ export default function Admin() {
           return setErrors(newErrors);   
         } else {
             setErrors({});
+            console.log(username,password);
             try{
+            console.log(username,password);
             const res =  await api.post("/login", { username, password })
             if(res.data.success){
                 localStorage.setItem("token", res.data.data.token);

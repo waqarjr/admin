@@ -7,13 +7,14 @@ export default function AdminDashboard() {
 
     const router = useRouter();
     const [loading , setLoading] = useState(true);
-
-
+    const [showMessage , setShowMessage] = useState('');
+    const [popup , setPopup] = useState(false);
+    
     const verified = async (token)=>{
-        try {
-            setLoading(true);
+        try { setLoading(true);
             const res = await api.post("/checking",{},{headers:{  "Authorization": `Bearer ${token}`}});
-            console.log(res.data);  
+            console.log(res.data); 
+            setShowMessage(res.data); 
             if(!res.data.success) {
                 router.push('/admin');
             }
@@ -55,7 +56,16 @@ export default function AdminDashboard() {
 
     return <div>
         Admin Dashboard
-
+        {showMessage && <p className="text-red-500 text-xs mt-1 mx-auto">{showMessage.message},{showMessage.data}</p>}
         <button className="btn-primary" onClick={logout} >Logout</button>
+        <button className="btn-primary" onClick={()=>setPopup(true)} >popup</button>
+
+        {popup && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={()=>setPopup(false)} >
+            <div className="bg-white p-4 rounded-lg" >
+                <p>Are you sure you want to logout?</p>
+                <button className="btn-primary" onClick={logout} >Logout</button>
+                <button className="btn-primary" onClick={()=>setPopup(false)} >Cancel</button>
+            </div>
+        </div>}
     </div>;
 }

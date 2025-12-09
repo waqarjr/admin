@@ -1,12 +1,12 @@
-const bcrypt = require("bcryptjs");
 const adminLogin = require("../modules/loginModule");
 
-const { generateToken, clearToken } = require("../lib/tokenize");
+const { generateToken } = require("../lib/tokenize");
 
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
     
+    console.log( username, password );
 
     if (!username || !password) {
       return res.status(400).json({ success: false, message: "All fields are required" });
@@ -25,7 +25,6 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(user.username, res);
-
     return res.status(200).json({ success: true, message: "Login successful", data: { token }, });
 
   } catch (err) {
@@ -41,7 +40,12 @@ const logout = (req,res)=>{
     // }
 }
 
+const dashboard = (req,res)=>{
+    return res.status(200).json({success : true ,message:"Welcome to the dashboard page",data:req.user.username})
+}
 
 
-module.exports = { login , logout}; 
+
+
+module.exports = { login, logout,dashboard }; 
  

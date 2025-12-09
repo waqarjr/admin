@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const authmiddleware = (req, res,) => {
+const authmiddleware = async(req, res,next) => {
 
     const authHeader = req.headers.authorization;
    
@@ -11,8 +11,12 @@ const authmiddleware = (req, res,) => {
     const token = authHeader.split(" ")[1]; 
 
     try {
-        jwt.verify(token, process.env.ADMIN_SECRET_KEY);
-        return res.status(200).json({ success: true, message: "Token is valid" });
+        const verifyToken = jwt.verify(token, process.env.ADMIN_SECRET_KEY);
+        if(!verifyToken){
+            return res.status(401).json({ success: false, message: "Invalid Token" });
+        }
+        req.user = verifyToken;
+        next();
     } catch (err) {
         return res.status(401).json({ success: false, message: "Invalid Token" });
     }
