@@ -1,15 +1,26 @@
+const path = require("path");
+const fs = require("fs");
 const uploadeImage = require("../modules/uploadeImage");
 
 const filesUploading = async (req,res)=>{
   try {
+    const {name , description , latitude , longitude} = req.body;
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    
+    
     await uploadeImage.create({ 
-        name : req.body.name,
-        description : req.body.description,
+        name : name,
+        description : description,
         file : `http://localhost:2000/${req.file.path}`,
+        latitude : lat,
+        longitude : lng
     })
-    return res.status(200).json({success : true ,message:"File uploaded successfully !",data:null})
+    
+    return res.status(200).json({ success : true, message:"File uploaded successfully !",data:null})
   } catch (error) {
-    return res.status(500).json({success : false ,message:"Something went wrong",data:null}) 
+    console.error('Upload error:', error);
+    return res.status(500).json({ success : false, message: error.message || "Something went wrong",data:null}) 
   }
 }
 
@@ -34,7 +45,9 @@ const filesDataGet= async (req,res)=>{
 const filesDataUpdate = async (req, res) => {
   try {
     const id = req.params.id;
-    const { name, description } = req.body;
+    const {name , description , latitude , longitude} = req.body;
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
     
     const data = await uploadeImage.findById(id);
     
@@ -46,17 +59,17 @@ const filesDataUpdate = async (req, res) => {
       const oldFilePath = path.join(__dirname, '../', data.file.replace('http://localhost:2000/', ''));
       console.log(oldFilePath);
       
-      if (fs.existsSync(oldFilePath)) {
+      if (fs.existsSync(oldFilePath)) { 
         fs.unlinkSync(oldFilePath);
       }
       
       await uploadeImage.updateOne({ _id: id },
-        { $set: {  name: name, file: `http://localhost:2000/${req.file.path}`, description: description } }
+        { $set: {  name: name, file: `http://localhost:2000/${req.file.path}`, description: description , latitude : lat , longitude : lng } }
       );
       
     } else {
       await uploadeImage.updateOne({ _id: id },
-        {  $set: {name: name, description: description} }
+        {  $set: {name: name, description: description , latitude : lat , longitude : lng} }
       );
     }
     
@@ -69,5 +82,7 @@ const filesDataUpdate = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message || "Something went wrong",  data: null });
   }
 }
+
+
 
 module.exports = { filesUploading ,filesFetching , filesDataGet,filesDataUpdate};
